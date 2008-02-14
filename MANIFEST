@@ -1,8 +1,0 @@
-Changes
-MANIFEST
-Makefile.PL
-lib/HTML/FormFu/Model/LDAP.pm
-t/00.load.t
-t/perlcritic.t
-t/pod-coverage.t
-t/pod.t
