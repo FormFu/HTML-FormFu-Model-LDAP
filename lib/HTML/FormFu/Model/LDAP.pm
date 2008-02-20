@@ -5,14 +5,17 @@ use warnings;
 
 use Data::Dumper;
 our $VERSION = '0.0100';
+use Encode;
 
 sub defaults_from_model {
     my ( $self, $base, $ldap_entry ) = @_;
-
+    my $cfg = $base->model_config;
+    $cfg = (ref($cfg) ? $cfg->{LDAP} : {});
     my $elements = $base->get_elements();
     foreach my $e (@$elements){
         my $name = $e->name();
         my $val = $ldap_entry->get_value($name);
+        $val = decode_utf8($val) if $cfg->{decode};
         if ($name && $val){            
             $e->default($val);
         }
