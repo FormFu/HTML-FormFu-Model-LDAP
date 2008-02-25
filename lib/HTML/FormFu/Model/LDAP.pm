@@ -2,6 +2,7 @@ package HTML::FormFu::Model::LDAP;
 
 use strict;
 use warnings;
+use base 'HTML::FormFu::Model';
 
 use Data::Dumper;
 our $VERSION = '0.0100';
