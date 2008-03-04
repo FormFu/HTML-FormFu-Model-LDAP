@@ -10,10 +10,11 @@ use Encode;
 
 sub default_values {
     my ( $self, $ldap_entry ) = @_;
+    
     my $base = $self->form;
     my $cfg = $base->model_config;
     $cfg = (ref($cfg) ? $cfg->{LDAP} : {});
-    my $elements = $base->get_elements();
+    my $elements = $base->get_all_elements();
     foreach my $e (@$elements){
         my $name = $e->name();
         my $val = $ldap_entry->get_value($name);
@@ -25,29 +26,32 @@ sub default_values {
 }
 
 sub update {
-    my ( $self, $base, $ldap_entry, $ldap_server ) = @_;
+    my ( $self, $ldap_entry, $ldap_server ) = @_;
 
-    my $c = $base->form->stash->{context};
+    $attrs ||= {};
+
+    # Get ldap_server from attrs.
+    my $ldap_server = defined $attrs->{ldap_server} ?
+        delete $attrs->{ldap_server} : undef;
+
+    my $input = $self->parent->{input};
     
-    my $elements = $base->get_elements();
-    my %elm_hash = ();
-    # Store all entries from form in a hash
-    foreach my $e (@$elements){
-        $elm_hash{ $e->name() } = $base->form->param_value( $e->name() );
-    }
     # Run through all possible ldap attributes, and store those from form hash
     my @objectclasses = $ldap_entry->get_value('objectClass');
     foreach my $oc (@objectclasses){
         foreach my $attr ($ldap_server->schema->must($oc), 
-                          $ldap_server->schema->may($oc)){
-            if ( defined($elm_hash{$attr->{name}}) ){
-                $ldap_entry->replace($attr->{name}, $elm_hash{$attr->{name}});
+                          $ldap_server->schema->may($oc)) {
+            if ( defined($$input{$attr->{name}}) ) {
+                $ldap_entry->replace($attr->{name}, $$input{$attr->{name}});
             }
         }
     }
     return $ldap_entry->update($ldap_server);
 }
 
+sub create {
+    update(@_);
+}
 1;
 
 
