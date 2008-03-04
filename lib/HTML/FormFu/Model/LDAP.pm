@@ -8,8 +8,9 @@ use Data::Dumper;
 our $VERSION = '0.0100';
 use Encode;
 
-sub defaults_from_model {
-    my ( $self, $base, $ldap_entry ) = @_;
+sub default_values {
+    my ( $self, $ldap_entry ) = @_;
+    my $base = $self->form;
     my $cfg = $base->model_config;
     $cfg = (ref($cfg) ? $cfg->{LDAP} : {});
     my $elements = $base->get_elements();
@@ -23,7 +24,7 @@ sub defaults_from_model {
     }
 }
 
-sub save_to_model {
+sub update {
     my ( $self, $base, $ldap_entry, $ldap_server ) = @_;
 
     my $c = $base->form->stash->{context};
