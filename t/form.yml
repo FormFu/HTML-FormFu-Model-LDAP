@@ -1,0 +1,12 @@
+---
+default_model: LDAP
+
+elements:
+    - type: Text
+      name: cn
+
+    - type: Text
+      name: sn
+
+    - type: Submit
+      name: submit
