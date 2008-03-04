@@ -26,14 +26,15 @@ sub default_values {
 }
 
 sub update {
-    my ( $self, $ldap_entry, $ldap_server ) = @_;
+    my ( $self, $ldap_entry, $attrs ) = @_;
 
     $attrs ||= {};
 
     # Get ldap_server from attrs.
     my $ldap_server = defined $attrs->{ldap_server} ?
         delete $attrs->{ldap_server} : undef;
-
+    
+    # The input from the form
     my $input = $self->parent->{input};
     
     # Run through all possible ldap attributes, and store those from form hash
