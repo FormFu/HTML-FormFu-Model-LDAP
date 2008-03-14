@@ -10,16 +10,16 @@ use Encode;
 
 sub default_values {
     my ( $self, $ldap_entry ) = @_;
-    
+
     my $base = $self->form;
-    my $cfg = $base->model_config;
-    $cfg = (ref($cfg) ? $cfg->{LDAP} : {});
+    my $cfg  = $base->model_config;
+    $cfg = ( ref($cfg) ? $cfg->{LDAP} : {} );
     my $elements = $base->get_all_elements();
-    foreach my $e (@$elements){
+    foreach my $e (@$elements) {
         my $name = $e->name();
-        my $val = $ldap_entry->get_value($name);
+        my $val  = $ldap_entry->get_value($name);
         $val = decode_utf8($val) if $cfg->{decode};
-        if ($name && $val){            
+        if ( $name && $val ) {
             $e->default($val);
         }
     }
@@ -30,20 +30,45 @@ sub update {
 
     $attrs ||= {};
 
+    my $form = $self->form;
+    my $base = defined $attrs->{base} ? delete $attrs->{base} : $form;
+
+    $base = $form->get_all_element( { nested_name => $attrs->{nested_base} } )
+      if defined $attrs->{nested_base}
+          && ( !defined $base->nested_name
+              || $base->nested_name ne $attrs->{nested_base} );
+
+    my @valid = $form->valid;
+
     # Get ldap_server from attrs.
-    my $ldap_server = defined $attrs->{ldap_server} ?
-        delete $attrs->{ldap_server} : undef;
-    
-    # The input from the form
-    my $input = $self->parent->{input};
-    
+    my $ldap_server =
+      defined $attrs->{ldap_server} ? delete $attrs->{ldap_server} : undef;
+
     # Run through all possible ldap attributes, and store those from form hash
     my @objectclasses = $ldap_entry->get_value('objectClass');
-    foreach my $oc (@objectclasses){
-        foreach my $attr ($ldap_server->schema->must($oc), 
-                          $ldap_server->schema->may($oc)) {
-            if ( defined($$input{$attr->{name}}) ) {
-                $ldap_entry->replace($attr->{name}, $$input{$attr->{name}});
+    foreach my $oc (@objectclasses) {
+        foreach my $attr ( $ldap_server->schema->must($oc),
+            $ldap_server->schema->may($oc) )
+        {
+            my $field = $base->get_field( { name => $attr->{name} } );
+            my $nested_name = defined $field ? $field->nested_name : undef;
+            my $value =
+              defined $field
+              ? $form->param_value( $field->nested_name )
+              : (
+                grep {
+                        defined $attrs->{nested_base}
+                      ? defined $nested_name
+                          ? $nested_name eq $_
+                          : 0
+                      : $attr->{name} eq $_
+                  } @valid
+              )
+              ? $form->param_value( $attr->{name} )
+              : undef;
+
+            if ( defined $value ) {
+                $ldap_entry->replace( $attr->{name}, $value );
             }
         }
     }
@@ -54,7 +79,6 @@ sub create {
     update(@_);
 }
 1;
-
 
 =head1 NAME
 
