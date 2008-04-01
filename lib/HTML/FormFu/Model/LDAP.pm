@@ -5,7 +5,7 @@ use warnings;
 use base 'HTML::FormFu::Model';
 
 use Data::Dumper;
-our $VERSION = '0.0100';
+our $VERSION = '0.0101';
 use Encode;
 
 sub default_values {
