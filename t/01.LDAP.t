@@ -20,7 +20,7 @@ my $form = HTML::FormFu->new;
 $form->load_config_file('t/form.yml');
 
 # Populating with LDAP values, and checking result
-$form->model('LDAP')->default_values( $e );
+$form->model->default_values( $e );
 my $elm = $form->get_element({name => 'sn'});
 is ($elm->value, "value1", "sn has value: value1");
 $elm = $form->get_element({name => 'cn'});

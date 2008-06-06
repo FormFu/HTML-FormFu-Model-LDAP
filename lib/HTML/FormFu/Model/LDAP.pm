@@ -12,8 +12,8 @@ sub default_values {
     my ( $self, $ldap_entry ) = @_;
 
     my $base = $self->form;
-    my $cfg  = $base->model_config;
-    $cfg = ( ref($cfg) ? $cfg->{LDAP} : {} );
+    my $cfg  = $base->model_config || {};
+
     my $elements = $base->get_all_elements();
     foreach my $e (@$elements) {
         my $name = $e->name();
@@ -75,97 +75,81 @@ sub update {
     return $ldap_entry->update($ldap_server);
 }
 
-sub create {
-    update(@_);
-}
 1;
 
 =head1 NAME
 
-HTML::FormFu::Model::LDAP - Integrat FormFu and LDAP
-
-
-=head1 VERSION
-
-This document describes HTML::FormFu::Model::LDAP version 0.0.1
-
+HTML::FormFu::Model::LDAP - Integrate FormFu and LDAP
 
 =head1 SYNOPSIS
 
-    # in your form-config:
+Set the form's L<HTML::FormFu/default_model>.
+
     ---
-    model_class: LDAP
-    
+    default_model: LDAP
+
+Example usage:
+
     # $ldap_entry should inherit from Net::LDAP::Entry, or atleast
-    # implement get_value() and 
-    $form->defaults_from_model($ldap_entry)
+    # implement get_value(), replace() and update()
+    
+    # set form's default values from LDAP
+    
+    $form->model->default_values($ldap_entry);
+    
+    # update LDAP with values from submitted form
     
     if ($form->submitted_and_valid) {
-        $form->save_to_model($ldap_entry);
+        $form->model->update($ldap_entry);
     }
-  
+
 =head1 DESCRIPTION
 
 This module implements the model-interface of HTML::FormFu and provides
 the glue between HTML::FormFu and an Net::LDAP based "model"
 
-=head1 INTERFACE 
+See L<HTML::FormFu::Model::DBIC> for further documentation on usage.
 
 =head2 METHODS
 
-=head3 defaults_from_model $ldap_entry
+=head3 default_values
+
+Arguments: $ldap_entry
 
 Fills out the fields in $form where it can find a matching attributes in ldap
 
-=head3 save_to_model $ldap_entry, $ldap_server
+=head3 update
 
-Iterates trough the $ldap_entry, finding any may and must attributes
+Arguments: $ldap_entry, [\%config]
+
+Iterates through the $ldap_entry, finding any may and must attributes
 that has a coresponding field in the form, and updates the ldap-entry.
 
 This also calles $ldap_entry->update($ldap_server) to commit its changes
 
-
-=head1 DIAGNOSTICS
-
-No known errors
-
-=head1 CONFIGURATION AND ENVIRONMENT
-
-you configure it trough the form-config:
-
----
-model_class: LDAP
-
-
-=head1 DEPENDENCIES
-
-Net::LDAP
-
-
-=head1 INCOMPATIBILITIES
-
-None reported.
-
-=head1 BUGS AND LIMITATIONS
+=head1 SUPPORT
 
 Please report any bugs or feature requests to
 C<bug-html-formfu-model-ldap@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org>.
 
-=head2 Missing methods
+=head2 NOT IMPLEMENTED
 
-=head3 options_from_model
+The following L<HTML::FormFu::Model> methods are not implemented:
 
-We have no options_from_model for now
+=over
 
+=item create
 
+=item options_from_model
 
+=back
 
 =head1 AUTHOR
 
 Andreas Marienborg  C<< <andreas@startsiden.no> >>
-Andreas Dahl C<< <andread@never.no> >>
 
+Andreas Dahl C<< <andread@never.no> >>
 
 =head1 LICENCE AND COPYRIGHT
 
