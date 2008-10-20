@@ -5,7 +5,7 @@ use warnings;
 use base 'HTML::FormFu::Model';
 
 use Data::Dumper;
-our $VERSION = '0.0101';
+our $VERSION = '0.0103';
 use Encode;
 
 sub default_values {
@@ -18,6 +18,7 @@ sub default_values {
     foreach my $e (@$elements) {
         my $name = $e->name();
         my $val  = $ldap_entry->get_value($name);
+        warn "decoding!" if $cfg->{decode};
         $val = decode_utf8($val) if $cfg->{decode};
         if ( $name && $val ) {
             $e->default($val);
@@ -66,9 +67,12 @@ sub update {
               )
               ? $form->param_value( $attr->{name} )
               : undef;
-
+            #warn $attr->{name} . ": " . ($value ? $value : "undef");
             if ( defined $value ) {
                 $ldap_entry->replace( $attr->{name}, $value );
+            } elsif ($nested_name) {
+                # This exists in the form, so we should remove it?
+                $ldap_entry->delete( $attr->{name}) if $ldap_entry->exists( $attr->{name} );
             }
         }
     }
