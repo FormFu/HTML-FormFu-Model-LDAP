@@ -18,7 +18,6 @@ sub default_values {
     foreach my $e (@$elements) {
         my $name = $e->name();
         my $val  = $ldap_entry->get_value($name);
-        warn "decoding!" if $cfg->{decode};
         $val = decode_utf8($val) if $cfg->{decode};
         if ( $name && $val ) {
             $e->default($val);
