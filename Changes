@@ -1,8 +1,8 @@
 Revision history for HTML-FormFu-Model-LDAP
 0.0103  2008-10-08 12:27:00+0200
-        I hate checkboxes and everything related to them. 
+        I hate checkboxes and everything related to them.
         God damn piece of crap design.
-        
+
 0.0102
         Fix checkbox support to default_values (on as a value)
         Fix checkbox/remove support in general by issuing remove for undef values
