@@ -95,13 +95,13 @@ Example usage:
 
     # $ldap_entry should inherit from Net::LDAP::Entry, or atleast
     # implement get_value(), replace() and update()
-    
+
     # set form's default values from LDAP
-    
+
     $form->model->default_values($ldap_entry);
-    
+
     # update LDAP with values from submitted form
-    
+
     if ($form->submitted_and_valid) {
         $form->model->update($ldap_entry);
     }
