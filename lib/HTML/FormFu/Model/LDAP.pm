@@ -93,7 +93,7 @@ Set the form's L<HTML::FormFu/default_model>.
 
 Example usage:
 
-    # $ldap_entry should inherit from Net::LDAP::Entry, or atleast
+    # $ldap_entry should inherit from Net::LDAP::Entry, or at least
     # implement get_value(), replace() and update()
     
     # set form's default values from LDAP
@@ -109,7 +109,7 @@ Example usage:
 =head1 DESCRIPTION
 
 This module implements the model-interface of HTML::FormFu and provides
-the glue between HTML::FormFu and an Net::LDAP based "model"
+the glue between HTML::FormFu and an Net::LDAP based "model".
 
 See L<HTML::FormFu::Model::DBIC> for further documentation on usage.
 
@@ -119,16 +119,16 @@ See L<HTML::FormFu::Model::DBIC> for further documentation on usage.
 
 Arguments: $ldap_entry
 
-Fills out the fields in $form where it can find a matching attributes in ldap
+Fills out the fields in $form where it can find a matching attribute in ldap.
 
 =head3 update
 
 Arguments: $ldap_entry, [\%config]
 
 Iterates through the $ldap_entry, finding any may and must attributes
-that has a coresponding field in the form, and updates the ldap-entry.
+that have a corresponding field in the form, and updates the ldap-entry.
 
-This also calles $ldap_entry->update($ldap_server) to commit its changes
+This also calls $ldap_entry->update($ldap_server) to commit its changes.
 
 =head1 SUPPORT
 
